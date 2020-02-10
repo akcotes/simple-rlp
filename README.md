@@ -50,7 +50,7 @@ if(err < 0)
 ```
 
 ### If you wish to encode individual elements:
-You may use `rlp_encode_element()` which will support character arrays and integers of arbitrary length. While it is provided, `rlp_encode_integer()` is superfluous and is only used if you wish to only serialize an integer < 64 bits and you wish to avoid using the `RlpElement_t` type. However, it is recommended you stick with the `rlp_encode_element()` API.
+You may use `rlp_encode_element()` which will support character arrays and integers of arbitrary length.
 ```
 // Integer to be serialized
 uint32_t num0 = 42;

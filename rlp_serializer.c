@@ -85,27 +85,6 @@ static bool rlp_memoverlap( const void *const a, size_t sza, const void *const b
 /*                             API Implementation                             */
 /* -------------------------------------------------------------------------- */
 
-// No real need to use this, the encoding element function can handle integers.
-// Returns length of output in bytes, or a negative error value
-int rlp_encode_integer(void *rlpEncodedOutput, size_t rlpEncodedOutputLen, uint64_t integer)
-{
-  // Does the buffer accomodate the size of the value of the integer?
-  size_t integerValueSizeBytes = 0;
-  for(size_t tmpInt = integer; tmpInt != 0; integerValueSizeBytes++) {
-    tmpInt >>= 8;
-  }
-
-  if(rlpEncodedOutput == NULL || integerValueSizeBytes == 0 || rlpEncodedOutputLen < integerValueSizeBytes)
-    return ERR_RLP_EBADARG;
-  
-  uint8_t *rlpOut = (uint8_t *)rlpEncodedOutput;
-  rlpOut[0] = (uint8_t) (RLP_OFFSET_ITEM_SHORT + integerValueSizeBytes);
-  for(size_t offset = 0; offset < integerValueSizeBytes; offset++) {
-    rlpOut[offset] = (uint8_t) (integer >> ((integerValueSizeBytes - offset) * 8));
-  }
-  return integerValueSizeBytes;
-  
-}
 
 // Returns length of output in bytes, or a negative error value
 int rlp_encode_element(void *rlpEncodedOutput, size_t rlpEncodedOutputLen, const RlpElement_t *const rlpElement, bool removeLeadingZeros)

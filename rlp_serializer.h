@@ -68,9 +68,6 @@ typedef enum {
 } ERLPError_e;
 
 // Returns length of output in bytes, or a negative error value
-int rlp_encode_integer(void *rlpEncodedOutput, size_t rlpEncodedOutputLen, uint64_t integer);
-
-// Returns length of output in bytes, or a negative error value
 int rlp_encode_element(void *rlpEncodedOutput, size_t rlpEncodedOutputLen, const RlpElement_t *const rlpElement, bool removeLeadingZeros);
 
 // Returns length of output in bytes, or a negative error value
