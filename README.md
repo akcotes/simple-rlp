@@ -13,13 +13,13 @@ The below example demonstrates how to define a few elements you wish to RLP enco
 ##### [Important Note]: This library does not validate ethereum transactions, this RLP serializer will serialize anything into the RLP encoding standard.
 ```
 // Example arbitrary data
-const uint8_t myToAddress[] = {
+uint8_t myToAddress[] = {
   0xe0, 0xde, 0xfb, 0x92, 0x14,
   0x5f, 0xef, 0x3c, 0x3a, 0x94,
   0x56, 0x37, 0x70, 0x5f, 0xaf,
   0xd3, 0xaa, 0x74, 0xa2, 0x41 };
 
-const uint8_t myValue[] = {
+uint8_t myValue[] = {
   0xde, 0x0b, 0x6b, 0x3a, 0x76, 
   0x40, 0x00, 0x00 };
 
@@ -56,7 +56,7 @@ You may use `rlp_encode_element()` which will support character arrays and integ
 uint32_t num0 = 42;
 
 // Tokenize the data
-const RlpElement_t t[] = {
+RlpElement_t t[] = {
   .buff = &num0, .len = sizeof(num0)
 };
 
