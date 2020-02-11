@@ -50,7 +50,7 @@
 // Create an array of these elements for a list.
 typedef struct rlpElement {
   size_t  len;
-  uint8_t buff[];
+  uint8_t *buff;
 } RlpElement_t;
 
 
