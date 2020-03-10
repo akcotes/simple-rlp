@@ -145,7 +145,7 @@ int rlp_encode_element(void *rlpEncodedOutput, size_t rlpEncodedOutputLen, const
     const uint8_t *buffBase = rlpElement->buff;
     for(size_t scanZero = 0; scanZero < rlpElement->len; scanZero++) { 
       if(buffBase[scanZero] & 0xFF) {
-        rlpElementBuff = &rlpElement->buff[scanZero];
+        rlpElementBuff = (buffBase + scanZero);
         rlpElementLen -= scanZero;
         break;
       }
