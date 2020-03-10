@@ -65,9 +65,9 @@ typedef enum {
 // Use this to set your individual payload/fields
 // Create an array of these elements for a list.
 typedef struct rlpElement {
-  RlpType_t type;
-  size_t    len;
-  uint8_t   *buff;
+  RlpType_t    type;
+  size_t       len;
+  const void   *buff;
 } RlpElement_t;
 
 

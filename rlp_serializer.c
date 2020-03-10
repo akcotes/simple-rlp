@@ -142,8 +142,9 @@ int rlp_encode_element(void *rlpEncodedOutput, size_t rlpEncodedOutputLen, const
   size_t rlpEncodedLen = 0;
 
   if(RLP_TYPE_IS_INTEGER_TYPE(rlpElement->type)) {
-    for(size_t scanZero = 0; scanZero < rlpElement->len; scanZero++) {
-      if(rlpElement->buff[scanZero] & 0xFF) {
+    const uint8_t *buffIdx = rlpElement->buff;
+    for(size_t scanZero = 0; scanZero < rlpElement->len; scanZero++) { 
+      if(buffIdx[scanZero] & 0xFF) {
         rlpElementBuff = &rlpElement->buff[scanZero];
         rlpElementLen -= scanZero;
         break;
