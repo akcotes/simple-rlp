@@ -45,12 +45,29 @@
 #define RLP_SERIALIZER_VER_MINOR 0
 #define RLP_SERIALIZER_VER_PATCH 0
 
+typedef enum {
+  RLP_TYPE_INVALID,
+  RLP_TYPE_BYTE_ARRAY,
+  // Note as per the spec "positive integers must be represented in big endian binary from with no leading zeroes"
+  RLP_TYPE_INT8, // these were not aligned with true byte values to prevent end-user misbehavior
+  RLP_TYPE_INT16,
+  RLP_TYPE_INT32,
+  RLP_TYPE_INT64,
+  RLP_TYPE_INT128,
+  RLP_TYPE_INT256,
+  RLP_TYPE_INT512,
+  RLP_TYPE_INT1024,
+} RlpType_t;
+#define RLP_TYPE_IS_INTEGER_TYPE(x) ((x) >= RLP_TYPE_INT8) && ((x) <= RLP_TYPE_INT1024)
+
+
 // This is a scatter type
 // Use this to set your individual payload/fields
 // Create an array of these elements for a list.
 typedef struct rlpElement {
-  size_t  len;
-  uint8_t *buff;
+  RlpType_t type;
+  size_t    len;
+  uint8_t   *buff;
 } RlpElement_t;
 
 
@@ -68,10 +85,10 @@ typedef enum {
 } ERLPError_e;
 
 // Returns length of output in bytes, or a negative error value
-int rlp_encode_element(void *rlpEncodedOutput, size_t rlpEncodedOutputLen, const RlpElement_t *const rlpElement, bool removeLeadingZeros);
+int rlp_encode_element(void *rlpEncodedOutput, size_t rlpEncodedOutputLen, const RlpElement_t *const rlpElement);
 
 // Returns length of output in bytes, or a negative error value
-int rlp_encode_list(void *rlpEncodedOutput, size_t rlpEncodedOutputLen, const RlpElement_t *const *rlpElementsArr, size_t rplElementsLen, bool removeElementLeadingZeros);
+int rlp_encode_list(void *rlpEncodedOutput, size_t rlpEncodedOutputLen, const RlpElement_t *const *rlpElementsArr, size_t rplElementsLen);
 
 
 #endif

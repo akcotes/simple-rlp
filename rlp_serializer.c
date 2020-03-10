@@ -43,7 +43,7 @@
 /*                             Internal Constants                             */
 /* -------------------------------------------------------------------------- */
 
-#define ENABLE_RLP_DEBUG 0
+#define ENABLE_RLP_DEBUG 1
 #if defined(ENABLE_RLP_DEBUG) && ENABLE_RLP_DEBUG == 1
 #include <stdio.h>
 #define DEBUG_PRINTF(fmt, ...) printf(fmt, ##__VA_ARGS__)
@@ -80,6 +80,45 @@ static bool rlp_memoverlap( const void *const a, size_t sza, const void *const b
     }
 }
 
+static bool rlp_type_mem_check(size_t buffSz, RlpType_t type) {
+  if(type == RLP_TYPE_INVALID)
+    return false;
+  if(type == RLP_TYPE_BYTE_ARRAY)
+    return true;
+  size_t byteSzRef = 0;
+  switch (type)
+  {
+    case RLP_TYPE_INT8:
+      byteSzRef = 1;
+      break;
+    case RLP_TYPE_INT16:
+      byteSzRef = 2;
+      break;
+    case RLP_TYPE_INT32:
+      byteSzRef = 4;
+      break;
+    case RLP_TYPE_INT64:
+      byteSzRef = 8;
+      break;
+    case RLP_TYPE_INT128:
+      byteSzRef = 16;
+      break;
+    case RLP_TYPE_INT256:
+      byteSzRef = 32;
+      break;
+    case RLP_TYPE_INT512:
+      byteSzRef = 64;
+      break;
+    case RLP_TYPE_INT1024:
+      byteSzRef = 128;
+      break;
+  
+    default:
+      break;
+  }
+  DEBUG_PRINTF("byteSzRef == %zu, buffSz == %zu\r\n", byteSzRef, buffSz);
+  return byteSzRef == buffSz;
+}
 
 /* -------------------------------------------------------------------------- */
 /*                             API Implementation                             */
@@ -87,13 +126,14 @@ static bool rlp_memoverlap( const void *const a, size_t sza, const void *const b
 
 
 // Returns length of output in bytes, or a negative error value
-int rlp_encode_element(void *rlpEncodedOutput, size_t rlpEncodedOutputLen, const RlpElement_t *const rlpElement, bool removeLeadingZeros)
+int rlp_encode_element(void *rlpEncodedOutput, size_t rlpEncodedOutputLen, const RlpElement_t *const rlpElement)
 {
-  if(rlpEncodedOutput == NULL || rlpElement == NULL || rlpEncodedOutputLen == 0)
+  if(rlpEncodedOutput == NULL || rlpElement == NULL || rlpEncodedOutputLen == 0 || 
+     rlpElement->type == RLP_TYPE_INVALID || !rlp_type_mem_check(rlpElement->len, rlpElement->type))
     return ERR_RLP_EBADARG;
   if(rlpEncodedOutputLen < (rlpElement->len + 1)) // extra byte for rlp encoding tag
     return ERR_RLP_ENOMEM;
-  if( rlp_memoverlap(rlpEncodedOutput, rlpEncodedOutputLen, rlpElement->buff, rlpElement->len)) // No overlapping memory regions
+  if(rlp_memoverlap(rlpEncodedOutput, rlpEncodedOutputLen, rlpElement->buff, rlpElement->len)) // No overlapping memory regions
     return ERR_RLP_EILLEGALMEM;
 
   uint8_t *rlpOut = (uint8_t *)rlpEncodedOutput;
@@ -101,7 +141,7 @@ int rlp_encode_element(void *rlpEncodedOutput, size_t rlpEncodedOutputLen, const
   size_t rlpElementLen = rlpElement->len;
   size_t rlpEncodedLen = 0;
 
-  if(removeLeadingZeros) {
+  if(RLP_TYPE_IS_INTEGER_TYPE(rlpElement->type)) {
     for(size_t scanZero = 0; scanZero < rlpElement->len; scanZero++) {
       if(rlpElement->buff[scanZero] & 0xFF) {
         rlpElementBuff = &rlpElement->buff[scanZero];
@@ -152,8 +192,7 @@ int rlp_encode_element(void *rlpEncodedOutput, size_t rlpEncodedOutputLen, const
 
 // Returns length of output in bytes, or a negative error value
 int rlp_encode_list(void *rlpEncodedOutput, size_t rlpEncodedOutputLen, 
-                    const RlpElement_t *const *rlpElementsArr, size_t rplElementsLen, 
-                    bool removeElementLeadingZeros)
+                    const RlpElement_t *const *rlpElementsArr, size_t rplElementsLen)
 {
   if( rlpEncodedOutput == NULL || rlpElementsArr == NULL || rlpEncodedOutputLen == 0 )
     return ERR_RLP_EBADARG;
@@ -175,7 +214,7 @@ int rlp_encode_list(void *rlpEncodedOutput, size_t rlpEncodedOutputLen,
   
   // Encode each element
   for(int i = 0; i < rplElementsLen; i++) {
-    size_t ret = rlp_encode_element((rlpOut + rlpEncodedLen), rlpEncodedOutputLen, rlpElementsArr[i], removeElementLeadingZeros);
+    size_t ret = rlp_encode_element((rlpOut + rlpEncodedLen), rlpEncodedOutputLen, rlpElementsArr[i]);
     DEBUG_PRINTF("retsize == %zu | elementNum == %d\r\n", ret, i);
     if(ret < 0)
       return ret;
