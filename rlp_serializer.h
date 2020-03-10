@@ -65,9 +65,9 @@ typedef enum {
 // Use this to set your individual payload/fields
 // Create an array of these elements for a list.
 typedef struct rlpElement {
-  RlpType_t    type;
-  size_t       len;
-  const void   *buff;
+  RlpType_t    type;   // type of data pointed to by *buff; note: integers get zeroes trimmed out
+  size_t       len;    // length of data field (zeroes included); used by the library to access buffer properly without overrunning it
+  const void   *buff;  // the pointer to the data; this can be anything from a byte array to an integer type. (NOTE: big endian format only)
 } RlpElement_t;
 
 
