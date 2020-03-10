@@ -69,7 +69,7 @@ typedef struct rlpElement {
   size_t       len;    // length of data field (zeroes included); used by the library to access buffer properly without overrunning it
   const void   *buff;  // the pointer to the data; this can be anything from a byte array to an integer type. (NOTE: big endian format only)
 } RlpElement_t;
-#define RLP_ELEMENT_INTEGER(i) ((RlpElement_t){ .buff = &(i), .len = sizeof(i), .type = rlp_type_by_size(sizeof(i))})
+#define RLP_ELEMENT_INTEGER(i) ((RlpElement_t){ .buff = &(i), .len = sizeof(i), .type = rlp_type_from_size(sizeof(i))})
 #define RLP_ELEMENT_BYTEARRAY(d, l) ((RlpElement_t){ .buff = (d), .len = (l), .type = RLP_TYPE_BYTE_ARRAY})
 
 typedef enum {
