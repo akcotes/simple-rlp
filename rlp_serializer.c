@@ -80,50 +80,44 @@ static bool rlp_memoverlap( const void *const a, size_t sza, const void *const b
     }
 }
 
-static bool rlp_type_mem_check(size_t buffSz, RlpType_t type) {
-  if(type == RLP_TYPE_INVALID)
-    return false;
-  if(type == RLP_TYPE_BYTE_ARRAY)
-    return true;
-  size_t byteSzRef = 0;
-  switch (type)
-  {
+static inline int rlp_size_from_type(RlpType_t t) {
+  switch(t) {
     case RLP_TYPE_INT8:
-      byteSzRef = 1;
-      break;
+      return 1;
     case RLP_TYPE_INT16:
-      byteSzRef = 2;
-      break;
+      return 2;
     case RLP_TYPE_INT32:
-      byteSzRef = 4;
-      break;
+      return 4;
     case RLP_TYPE_INT64:
-      byteSzRef = 8;
-      break;
+      return 8;
     case RLP_TYPE_INT128:
-      byteSzRef = 16;
-      break;
+      return 16;
     case RLP_TYPE_INT256:
-      byteSzRef = 32;
-      break;
+      return 32;
     case RLP_TYPE_INT512:
-      byteSzRef = 64;
-      break;
+      return 64;
     case RLP_TYPE_INT1024:
-      byteSzRef = 128;
-      break;
-  
+      return 128;
     default:
-      break;
+      return ERR_RLP_EBADARG;
   }
-  DEBUG_PRINTF("byteSzRef == %zu, buffSz == %zu\r\n", byteSzRef, buffSz);
-  return byteSzRef == buffSz;
+}
+
+static inline bool rlp_type_mem_check(size_t buffSz, RlpType_t type) {
+  return buffSz == rlp_size_from_type(type);
 }
 
 /* -------------------------------------------------------------------------- */
 /*                             API Implementation                             */
 /* -------------------------------------------------------------------------- */
 
+RlpType_t rlp_type_from_size(int s) {
+  for(int i = RLP_TYPE_INT8; i <= RLP_TYPE_INT1024; i++) {
+    if(s == rlp_size_from_type(i))
+      return i;
+  }
+  return ERR_RLP_EBADARG;
+}
 
 // Returns length of output in bytes, or a negative error value
 int rlp_encode_element(void *rlpEncodedOutput, size_t rlpEncodedOutputLen, const RlpElement_t *const rlpElement)
