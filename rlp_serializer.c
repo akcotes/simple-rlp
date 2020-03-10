@@ -43,7 +43,7 @@
 /*                             Internal Constants                             */
 /* -------------------------------------------------------------------------- */
 
-#define ENABLE_RLP_DEBUG 1
+#define ENABLE_RLP_DEBUG 0
 #if defined(ENABLE_RLP_DEBUG) && ENABLE_RLP_DEBUG == 1
 #include <stdio.h>
 #define DEBUG_PRINTF(fmt, ...) printf(fmt, ##__VA_ARGS__)
