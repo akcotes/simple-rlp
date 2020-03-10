@@ -34,13 +34,18 @@
 #include "rlp_serializer.h"
 #include <stdio.h>
 
-
+/*
+00000000
+47868c0000000000
+0000c350
+e242e54155b1abc71fc118065270cecaaf8b77683b9aca
+*/
 // Example of Ethereum txn using library
-uint8_t _nonce[] = {0x01};
+uint8_t _nonce[] = {0x00, 0x00, 0x00, 0x00};
 RlpElement_t nonce = {
   .buff = _nonce,
   .len = sizeof(_nonce),
-  .type = RLP_TYPE_INT8
+  .type = RLP_TYPE_INT32
 };
 uint8_t _gasPrice[] = {0x0f, 0x42, 0x40};
 RlpElement_t gasPrice = {

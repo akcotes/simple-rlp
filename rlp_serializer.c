@@ -142,6 +142,10 @@ int rlp_encode_element(void *rlpEncodedOutput, size_t rlpEncodedOutputLen, const
         rlpElementBuff = (buffBase + scanZero);
         rlpElementLen -= scanZero;
         break;
+      } else if (scanZero == rlpElement->len - 1) {
+        // If we reach the end and have not yet found a non-zero byte,
+        // this field is zero length
+        rlpElementLen = 0;
       }
     }
   }
