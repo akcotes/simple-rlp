@@ -143,7 +143,7 @@ int rlp_encode_element(void *rlpEncodedOutput, size_t rlpEncodedOutputLen, const
   if(RLP_TYPE_IS_INTEGER_TYPE(rlpElement->type)) {
     const uint8_t *buffBase = rlpElement->buff;
     for(size_t scanZero = 0; scanZero < rlpElement->len; scanZero++) { 
-      if(buffBase[scanZero] & 0xFF) {
+      if(buffBase[scanZero]) {
         rlpElementBuff = (buffBase + scanZero);
         rlpElementLen -= scanZero;
         break;
@@ -159,7 +159,8 @@ int rlp_encode_element(void *rlpEncodedOutput, size_t rlpEncodedOutputLen, const
     rlpEncodedLen = 1;
     rlpOut[0] = (uint8_t) RLP_OFFSET_ITEM_SHORT;
   }
-  else if(rlpElementLen == 1 && (rlpElementBuff[0] == 0x00 || (rlpElementBuff[0] & 0xFF) < 0x80)) {
+  else if(rlpElementLen == 1 && (rlpElementBuff[0] == 0x00 || 
+          rlpElementBuff[0] < RLP_OFFSET_ITEM_SHORT)) {
     rlpEncodedLen = 1;
     rlpOut[0] = rlpElementBuff[0];
   } 
@@ -184,7 +185,7 @@ int rlp_encode_element(void *rlpEncodedOutput, size_t rlpEncodedOutputLen, const
     rlpOut[0] = (uint8_t) (RLP_OFFSET_ITEM_LONG + lengthOfLength);
     tmpLength = rlpElementLen;
     for(int i = lengthOfLength; i > 0; --i) {
-      rlpOut[i] = (uint8_t) (tmpLength & 0xFF);
+      rlpOut[i] = (uint8_t) tmpLength;
       tmpLength = tmpLength >> 8;
     }
     // Payload
@@ -244,7 +245,7 @@ int rlp_encode_list(void *rlpEncodedOutput, size_t rlpEncodedOutputLen,
     // generate the header
     for(int i = 0; i < listHdrByteCnt; i++) {
       rlpOut[(listHdrByteCnt - 1) - i] = // subtract 1 to turn count into index
-        (uint8_t) ((rlpEncodedLen >> (8 * i)) & 0xFF);
+        (uint8_t) (rlpEncodedLen >> (8 * i));
     }
     rlpOut[0] = (uint8_t) (RLP_OFFSET_LIST_LONG + (listHdrByteCnt - 1));
   }
