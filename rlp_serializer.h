@@ -86,8 +86,8 @@ typedef enum {
 } ERLPError_e;
 
 
-// Determine the RLP data type based on size
-RlpType_t rlp_type_from_size(int s);
+// Determine the correct RLP integer type based on size
+RlpType_t rlp_int_type_from_size(int s);
 
 // Returns length of output in bytes, or a negative error value
 int rlp_encode_element(void *rlpEncodedOutput, size_t rlpEncodedOutputLen, const RlpElement_t *const rlpElement);

@@ -80,7 +80,7 @@ static bool rlp_memoverlap( const void *const a, size_t sza, const void *const b
     }
 }
 
-static inline int rlp_size_from_type(RlpType_t t) {
+static inline int rlp_int_size_from_type(RlpType_t t) {
   switch(t) {
     case RLP_TYPE_INT8:
       return 1;
@@ -104,16 +104,21 @@ static inline int rlp_size_from_type(RlpType_t t) {
 }
 
 static inline bool rlp_type_mem_check(size_t buffSz, RlpType_t type) {
-  return buffSz == rlp_size_from_type(type);
+  if (RLP_TYPE_IS_INTEGER_TYPE(type))
+      return buffSz == rlp_int_size_from_type(type);
+    else if (type == RLP_TYPE_BYTE_ARRAY)
+      return true;
+  // Likely RLP_TYPE_INVALID
+  return false;
 }
 
 /* -------------------------------------------------------------------------- */
 /*                             API Implementation                             */
 /* -------------------------------------------------------------------------- */
 
-RlpType_t rlp_type_from_size(int s) {
+RlpType_t rlp_int_type_from_size(int s) {
   for(int i = RLP_TYPE_INT8; i <= RLP_TYPE_INT1024; i++) {
-    if(s == rlp_size_from_type(i))
+    if(s == rlp_int_size_from_type(i))
       return i;
   }
   return ERR_RLP_EBADARG;
