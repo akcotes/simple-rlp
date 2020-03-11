@@ -218,7 +218,7 @@ int rlp_encode_list(void *rlpEncodedOutput, size_t rlpEncodedOutputLen,
   
   // Encode each element
   for(int i = 0; i < rplElementsLen; i++) {
-    size_t ret = rlp_encode_element((rlpOut + rlpEncodedLen), rlpEncodedOutputLen, rlpElementsArr[i]);
+    int ret = rlp_encode_element((rlpOut + rlpEncodedLen), rlpEncodedOutputLen, rlpElementsArr[i]);
     DEBUG_PRINTF("retsize == %zu | elementNum == %d\r\n", ret, i);
     if(ret < 0)
       return ret;
