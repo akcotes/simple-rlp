@@ -132,7 +132,7 @@ int rlp_encode_element(void *rlpEncodedOutput, size_t rlpEncodedOutputLen, const
     return ERR_RLP_EBADARG;
   if(rlpEncodedOutputLen < (rlpElement->len + 1)) // extra byte for rlp encoding tag
     return ERR_RLP_ENOMEM;
-  if(rlp_memoverlap(rlpEncodedOutput, rlpEncodedOutputLen, rlpElement->buff, rlpElement->len)) // No overlapping memory regions
+  if(rlp_memoverlap(rlpEncodedOutput, rlpElement->len, rlpElement->buff, rlpElement->len)) // No overlapping memory regions
     return ERR_RLP_EILLEGALMEM;
 
   uint8_t *rlpOut = (uint8_t *)rlpEncodedOutput;
